@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content" class="container-md" th:with="board = ${boardFileDTO.boardDTO}">
+
+    <h3> [ no. [[${board.bno}]] ] detail page</h3>
+    <form action="/board/modify" method="post" id="modForm" enctype="multipart/form-data">
+        <input type="hidden" name="bno" th:value="${board.bno}">
+        <div class="mb-3">
+            <label for="t" class="form-label">Title</label>
+            <input type="text" name="title" th:value="${board.title}" readonly class="form-control" id="t" placeholder="title...">
+        </div>
+        <div class="mb-3">
+            <label for="w" class="form-label">Writer</label>
+            <input type="text" name="writer" th:value="${board.writer}" readonly class="form-control" id="w" placeholder="writer...">
+        </div>
+        <div class="mb-3">
+            <label for="r" class="form-label">regDate</label>
+            <input type="text" name="regDate" th:value="${board.regDate}" readonly class="form-control" id="r" placeholder="writer...">
+        </div>
+        <div class="mb-3">
+            <label for="c" class="form-label">Content</label>
+            <textarea class="form-control" name="content" id="c" readonly rows="5" cols="30" placeholder="Content...">[[${board.content}]]</textarea>
+        </div>
+        <!--file print-->
+        <div class="mb-3">
+            <ul class="list-group">
+                <li class="list-group-item" th:each="fileDTO:${boardFileDTO.fileList}">
+                    <div th:if="${fileDTO.fileType eq 1}" class="mb-3">
+                        <img alt="그림없음" th:src="@{|/upload/${fileDTO.saveDir}/${fileDTO.uuid}_th_${fileDTO.fileName}|}">
+                    </div>
+                    <div th:unless="${fileDTO.fileType eq 1}" class="mb-3">
+                        <a th:href="@{|/upload/${fileDTO.saveDir}/${fileDTO.uuid}_${fileDTO.fileName}|}"
+                            th:download="${fileDTO.fileName}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-file-text" viewBox="0 0 16 16">
+                                <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="mb-3 fw-bold">
+                        [[${fileDTO.fileName}]]
+                    </div>
+                    <span class="badge text-bg-warning">[[${fileDTO.regDate}]] / [[${fileDTO.fileSize}]]Bytes</span>
+                    <button type="button" th:data-uuid="${fileDTO.uuid}"
+                            class="btn btn-sm btn-outline-danger file-x"
+                            style="visibility: hidden;">x</button>
+                </li>
+            </ul>
+        </div>
+        <!--file upload 추가-->
+        <div class="mb-3">
+            <input type="file" name="files" class="form-control" id="file" multiple style="display: none">
+            <button type="button" class="btn btn-outline-dark" id="trigger" style="display: none">file upload</button>
+        </div>
+
+        <!--file list print-->
+        <div class="mb-3" id="fileZone"></div>
+    </form>
+    <button type="button" class="btn btn-primary" id="modBtn">modify</button>
+    <a th:href="@{/board/remove(bno=${board.bno})}"><button type="button" class="btn btn-danger" id="delBtn">delete</button></a>
+    <a th:href="@{/board/list}"><button type="button" class="btn btn-success" id="listBtn">list</button></a>
+
+    <!--comment post-->
+    <div id="comment">
+    <div class="input-group my-3">
+        <span class="input-group-text" id="cmtWriter">Tester</span>
+        <input type="text" id="cmtText" class="form-control" placeholder="Add Comment..." aria-label="Username" aria-describedby="basic-addon1">
+        <button type="button" id="cmtAddBtn" class="btn btn-primary">post</button>
+    </div>
+    <!-- comment spread -->
+    <ul class="list-group list-group-flush" id="cmtListArea">
+        <li class="list-group-item">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">writer</div>
+                content
+            </div>
+            <span class="badge text-bg-primary">reg_date</span>
+        </li>
+    </ul>
+
+    <!-- moreBtn -->
+    <div class="input-group my-3">
+        <button type="button" class="btn btn-info" id="moreBtn" data-page="1" style="visibility: hidden">more</button>
+    </div>
+
+    <!--model-->
+        <div class="modal" tabindex="-1" id="commentModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cmtWriterMod">Tester</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" class="form-control" id="cmtTextMod">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="cmtModBtn">changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+    <script th:inline="javascript">
+        const bnoValue = [[${board.bno}]];
+    </script>
+    <script th:src="@{/js/boardComment.js}"></script>
+    <script th:src="@{/js/boardModify.js}"></script>
+    <script th:src="@{/js/boardRegister.js}"></script>
+    <script>
+        spreadCommentList(bnoValue);
+    </script>
+</div>
+
