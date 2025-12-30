@@ -54,6 +54,9 @@ async function fileRemoveToServer(uuid) {
         const url = '/board/file/'+uuid;
         const config = {
             method: 'delete',
+            headers:{
+                [csrfToken]  : csrfToken
+            }
         }
         const resp = await fetch(url, config);
         const result = await resp.text();

@@ -1,6 +1,10 @@
 console.log("boardComment.js in");
 console.log(bnoValue);
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const csrfHeader = document.querySelector('meta[name="csrf-header"]').getAttribute('content');
+
+
 document.getElementById('cmtAddBtn').addEventListener('click',()=>{
     const cmtText = document.getElementById('cmtText');
     const cmtWriter = document.getElementById('cmtWriter');
@@ -134,6 +138,9 @@ async function removeCommentToServer(cno) {
         const url = "/comment/remove/"+cno;
         const config ={
             method: 'delete',
+            headers:{
+                [csrfToken]  : csrfToken
+            }
         }
         const resp = await fetch(url, config);
         const result = resp.text();
@@ -151,7 +158,8 @@ async function updateCommentToServer(modData) {
         const config={
             method:'put',
             headers: {
-                'content-type': 'application/json; charset=utf-8'
+                'content-type': 'application/json; charset=utf-8',
+                [csrfToken]  : csrfToken
             },
             body: JSON.stringify(modData)
         }
@@ -181,7 +189,8 @@ async function postCommentToServer(cmtData) {
      const config = {
         method: 'post',
         headers: {
-            'content-type':'application/json; charset=utf-8'
+            'content-type':'application/json; charset=utf-8',
+            [csrfToken]  : csrfToken
         },
         body:JSON.stringify(cmtData)
      };

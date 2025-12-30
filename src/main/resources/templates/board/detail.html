@@ -7,6 +7,8 @@
 
     <h3> [ no. [[${board.bno}]] ] detail page</h3>
     <form action="/board/modify" method="post" id="modForm" enctype="multipart/form-data">
+        <!-- 토큰 추가 (CSRF) -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <input type="hidden" name="bno" th:value="${board.bno}">
         <div class="mb-3">
             <label for="t" class="form-label">Title</label>

@@ -1,13 +1,12 @@
 package com.example.demo.entity;
 
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
 public enum AuthRole {
-    /* 권한을 열거형으로 만드는것이 일반적 */
+    /* 권한을 열거형으로 만드는 것이 일반적 */
     USER("ROLE_USER"),
     ADMIN("ROLE_ADMIN");
 

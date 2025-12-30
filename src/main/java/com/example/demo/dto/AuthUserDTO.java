@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-
 import lombok.*;
 
 @Getter
@@ -10,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AuthUserDTO {
-    private Long id;
+    private long id;
     private String email;
     private String role;
 }

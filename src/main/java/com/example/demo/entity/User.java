@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-public class User extends  TimeBase{
+public class User extends TimeBase {
     @Id
     private String email;
     @Column(nullable = false)
@@ -24,21 +24,19 @@ public class User extends  TimeBase{
     private String nickName;
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
-    
-    /*mapperBy는 연관관계의 주 Auth_user의 user 필드와 연결
-    * JPA는 주인이 아닌쪽에서는 조회만 가능하도록 관리
-    * cascadeType.ALL : user를 지정할 때 Auth_user도 같이 저장되도록 설계
-    * orphanRemoval 삭제시 같이 제거
-    *
-    *
-    * */
+
+    /* mapperdBy: 연관관계의 주  Auth_user의 user 필드와 연결
+     * JPA는 주인이 아닌쪽에서는 조회만 가능하도록 관리
+     * - CascadeType.ALL: User를 지정할 때 Auth_user 도 같이 저장되도록 설계
+     * - orphanRemoval = true : 삭제시 같이 제거
+     *  */
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AuthUser> authList = new ArrayList<>();
 
-    //편의 메서드
-    public void addAuth(AuthRole role) {
-        if(this.authList == null) {
+    // 편의 메서드
+    public void addAuth(AuthRole role){
+        if(this.authList == null){
             this.authList = new ArrayList<>();
         }
         this.authList.add(AuthUser.builder()
@@ -46,5 +44,4 @@ public class User extends  TimeBase{
                 .auth(role)
                 .build());
     }
-
 }

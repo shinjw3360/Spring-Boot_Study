@@ -47,7 +47,7 @@ public class CommentController {
     @GetMapping(value = "/list/{bno}/{page}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageHandler<CommentDTO>> list(@PathVariable("bno") Long bno,
-                                                 @PathVariable("page") int page){
+                                                        @PathVariable("page") int page){
         Page<CommentDTO> list = commentService.getList(bno, page);
 
         PageHandler<CommentDTO> pageHandler = new PageHandler<>(list, page);

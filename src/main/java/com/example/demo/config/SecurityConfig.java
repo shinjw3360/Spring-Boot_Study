@@ -28,19 +28,22 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
+                //.csrf(csrf -> csrf.disable()) // 완성 후 풀기
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/user/list").hasAnyRole("ADMIN")
-                        //.requestMatchers("").permitAll()
+                        .requestMatchers("/","/dist/**", "/js/**","/image/**", "/upload/**",
+                                "/board/list", "/board/detail", "/comment/list/**",
+                                "/user/join","/user/login","/error/**"
+                        ).permitAll()
                         // 나중에 권한에 따른 설정을 추가
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .usernameParameter("email")
                         .passwordParameter("pwd")
                         .loginPage("/user/login")
                         .successHandler(authenticationSuccessHandler())
-                        .failureHandler(authenticationFailHandler())
+                        .failureHandler(authenticationFailureHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -69,7 +72,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationFailureHandler authenticationFailHandler(){
+    AuthenticationFailureHandler authenticationFailureHandler(){
         return new LoginFailHandler();
     }
 
