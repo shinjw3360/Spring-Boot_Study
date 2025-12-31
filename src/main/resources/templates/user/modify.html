@@ -14,14 +14,14 @@
       <div class="card border-dark mb-3" style="max-width: 540px;">
         <div class="row g-0">
           <div class="col-md-4">
-            <img th:src="@{/image/pic07.jpg}" class="img-fluid rounded-start" alt="...">
+            <img th:src="@{/image/night-view.jpg}" class="img-fluid rounded-start" alt="...">
           </div>
           <div class="col-md-8">
             <div class="card-body">
               <input type="hidden" name="email" th:value="${userDTO.email }">
               <h5 class="card-title">
                 <input type="text" name="nickName" class="form-control" th:value="${userDTO.nickName }">
-                <input type="text" name="pwd" class="form-control" placeholder="password...">
+                <input type="password" name="pwd" class="form-control" placeholder="password...">
               </h5>
               <p class="card-text">[[${userDTO.email }]] </p>
               <p class="card-text">Register [[${userDTO.regDate }]] </p>

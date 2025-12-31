@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content" class="container-md" th:with="board = ${boardFileDTO.boardDTO}">
@@ -61,14 +62,19 @@
         <!--file list print-->
         <div class="mb-3" id="fileZone"></div>
     </form>
+
+    <th:block sec:authorize="isAuthenticated()" th:if="${#authentication.name eq board.writer}">
     <button type="button" class="btn btn-primary" id="modBtn">modify</button>
     <a th:href="@{/board/remove(bno=${board.bno})}"><button type="button" class="btn btn-danger" id="delBtn">delete</button></a>
+    </th:block>
+
     <a th:href="@{/board/list}"><button type="button" class="btn btn-success" id="listBtn">list</button></a>
 
     <!--comment post-->
     <div id="comment">
-    <div class="input-group my-3">
-        <span class="input-group-text" id="cmtWriter">Tester</span>
+    <!-- 권한이 있을때만 보여지기 -->
+    <div class="input-group my-3" sec:authorize="isAuthenticated()">
+        <span class="input-group-text" id="cmtWriter">[[${#authentication.name}]]</span>
         <input type="text" id="cmtText" class="form-control" placeholder="Add Comment..." aria-label="Username" aria-describedby="basic-addon1">
         <button type="button" id="cmtAddBtn" class="btn btn-primary">post</button>
     </div>
@@ -114,6 +120,7 @@
     </div>
     <script th:inline="javascript">
         const bnoValue = [[${board.bno}]];
+        const loginUser = [[${#authentication.name}]];
     </script>
     <script th:src="@{/js/boardComment.js}"></script>
     <script th:src="@{/js/boardModify.js}"></script>

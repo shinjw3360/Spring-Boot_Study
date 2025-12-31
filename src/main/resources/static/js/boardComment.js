@@ -1,8 +1,8 @@
 console.log("boardComment.js in");
 console.log(bnoValue);
 
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-const csrfHeader = document.querySelector('meta[name="csrf-header"]').getAttribute('content');
+const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
 
 document.getElementById('cmtAddBtn').addEventListener('click',()=>{
@@ -50,8 +50,10 @@ function spreadCommentList(bno, page=1){
                 li += `${comment.content}`;
                 li += `</div>`;
                 li += `<span class="badge text-bg-primary">${comment.regDate}</span>`;
-                li += `<button type="button" class="btn btn-sm btn-outline-warning mod" data-bs-toggle="modal" data-bs-target="#commentModal">e</button>`;
-                li += `<button type="button" class="btn btn-sm btn-outline-danger del">x</button>`;
+                if(loginUser == comment.writer) {
+                    li += `<button type="button" class="btn btn-sm btn-outline-warning mod" data-bs-toggle="modal" data-bs-target="#commentModal">e</button>`;
+                    li += `<button type="button" class="btn btn-sm btn-outline-danger del">x</button>`;
+                }
                 li += `</li>`;
             }
             ul.innerHTML += li;
@@ -139,7 +141,7 @@ async function removeCommentToServer(cno) {
         const config ={
             method: 'delete',
             headers:{
-                [csrfToken]  : csrfToken
+                [csrfHeader]  : csrfToken
             }
         }
         const resp = await fetch(url, config);
@@ -159,7 +161,7 @@ async function updateCommentToServer(modData) {
             method:'put',
             headers: {
                 'content-type': 'application/json; charset=utf-8',
-                [csrfToken]  : csrfToken
+                [csrfHeader]  : csrfToken
             },
             body: JSON.stringify(modData)
         }
@@ -190,7 +192,7 @@ async function postCommentToServer(cmtData) {
         method: 'post',
         headers: {
             'content-type':'application/json; charset=utf-8',
-            [csrfToken]  : csrfToken
+            [csrfHeader]  : csrfToken
         },
         body:JSON.stringify(cmtData)
      };
